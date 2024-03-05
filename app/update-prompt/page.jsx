@@ -10,34 +10,28 @@ const UpdatePrompt = () => {
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
 
-  const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({ prompt: "", tag: "" });
+  const [submitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const getPromptDetails = async () => {
-      try {
-        const response = await fetch(`/api/prompt/${promptId}`);
-        console.log(response);
-        if (!response.ok) {
-          throw new Error("Prompt Not Found");
-        }
-        const data = await response.json();
-        setPost({ prompt: data.prompt, tag: data.tag });
-      } catch (error) {
-        console.log(error);
-      }
+      const response = await fetch(`/api/prompt/${promptId}`);
+      const data = await response.json();
+
+      setPost({
+        prompt: data.prompt,
+        tag: data.tag,
+      });
     };
 
-    if (promptId) {
-      getPromptDetails();
-    }
+    if (promptId) getPromptDetails();
   }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
+    setIsSubmitting(true);
 
-    if (!promptId) notFound();
+    if (!promptId) return alert("Missing PromptId!");
 
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
@@ -47,13 +41,14 @@ const UpdatePrompt = () => {
           tag: post.tag,
         }),
       });
+
       if (response.ok) {
-        router.push("/profile");
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -64,7 +59,6 @@ const UpdatePrompt = () => {
       setPost={setPost}
       submitting={submitting}
       handleSubmit={updatePrompt}
-      profile={"profile"}
     />
   );
 };
