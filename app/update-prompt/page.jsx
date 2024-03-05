@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams, notFound } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Form from "@components/Form";
 
@@ -30,8 +30,6 @@ const EditPrompt = () => {
 
     if (promptId) {
       getPromptDetails();
-    } else {
-      notFound();
     }
   }, [promptId]);
 
